@@ -92,7 +92,7 @@ move rotateMove(move bodyMove, move rotation){
 std::vector<move> rotateMoves(std::vector<move> bodyMoves, move rotation){
     std::vector<move> newMoves;
     for(auto move : bodyMoves){
-        newMoves.push_back(rotateMove(move, rotation));
+        newMoves.emplace_back(rotateMove(move, rotation));
     }
     return newMoves;
 }
@@ -299,7 +299,7 @@ std::vector<move> createSolution(std::vector<move> start, std::vector<move> end)
     std::vector<move> result = start;
     for (int i = end.size()-1; i>=0;i--) {
         // kto to kurwa jest marek mostowiak
-        result.push_back(getInverse(end.at(i)));
+        result.emplace_back(getInverse(end.at(i)));
     }
     return result;
 }
@@ -317,7 +317,7 @@ void check_if_solved(bool &fullMatch, std::vector<std::pair<std::vector<move>,Py
         for(auto state1: startStates){
             for(auto state2: endStates){
                 if(state1.second.match(state2.second)){
-                    solutions.push_back(createSolution(state1.first, state2.first));
+                    solutions.emplace_back(createSolution(state1.first, state2.first));
                 }
             }
         }
@@ -335,7 +335,7 @@ void check_if_solved(bool &fullMatch, std::vector<std::pair<std::vector<move>,Py
             int hash = state.second.hash();
             if (startMap.find(hash) != startMap.end()) {
                 for (std::vector<move> start : startMap[hash]) {
-                    solutions.push_back(createSolution(start, state.first));
+                    solutions.emplace_back(createSolution(start, state.first));
                 }
             }
         }
@@ -353,10 +353,10 @@ void moveStates(std::vector<std::pair<std::vector<move>,Pyraminx>> &states) {
             }
             if (lastMove != possibleMove && lastMove != getInverse(possibleMove)) {
                 std::vector<move> moves = state.first;
-                moves.push_back(possibleMove);
+                moves.emplace_back(possibleMove);
                 Pyraminx newState = state.second;
                 newState.makeMove(possibleMove);
-                temp.push_back(std::make_pair(moves, newState));
+                temp.emplace_back(moves, newState);
             }
         }
     }
@@ -368,7 +368,7 @@ std::vector<std::vector<move>> findSolution(std::vector<move> scramble, std::vec
     std::vector<std::pair<std::vector<move>,Pyraminx>> startStates;
     std::vector<std::pair<std::vector<move>,Pyraminx>> endStates;
     for(auto state : end){
-        endStates.push_back(std::make_pair(std::vector<move>(), state));
+        endStates.emplace_back(std::vector<move>(), state);
     }
 
     Pyraminx start = Pyraminx(scramble);
@@ -380,17 +380,17 @@ std::vector<std::vector<move>> findSolution(std::vector<move> scramble, std::vec
             for(auto rot2: secondRotation){
                 std::vector<move> preMoves;
                     if(rot1 != none){
-                    preMoves.push_back(rot1);
+                        preMoves.emplace_back(rot1);
                 }
                 if(rot2 != none){
-                    preMoves.push_back(rot2);
+                    preMoves.emplace_back(rot2);
                 }
                 Pyraminx current = Pyraminx(rotateMoves(rotateMoves(scramble, rot1), rot2));
-                startStates.push_back(std::make_pair(preMoves, current));
+                startStates.emplace_back(preMoves, current);
             }
         }
     }else{
-        startStates.push_back(std::make_pair(std::vector<move>(), start));
+        startStates.emplace_back(std::vector<move>(), start);
     }
 
     int moveCount = 0;
